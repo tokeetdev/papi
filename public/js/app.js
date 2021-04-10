@@ -27,7 +27,8 @@
 
 		// app initial state
 		data: {
-			todos: todoStorage.fetch(),
+			todos: [],
+			loaded: false,
 			newTodo: '',
 			editedTodo: null,
 			visibility: 'all'
@@ -37,7 +38,9 @@
 		watch: {
 			todos: {
 				deep: true,
-				handler: todoStorage.save
+				handler: function (todos) {
+					if (this.loaded) todoStorage.save(todos)
+				}
 			}
 		},
 
@@ -60,6 +63,13 @@
 					});
 				}
 			}
+		},
+
+		created() {
+			todoStorage.fetch().then(todos => {
+				this.todos = todos
+				this.$nextTick(() => this.loaded = true)
+			})
 		},
 
 		// methods that implement data logic.
