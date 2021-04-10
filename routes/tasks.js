@@ -3,6 +3,13 @@ var router = express.Router()
 
 let mongo = {} // kinda
 
+router.use(function (req, res, next) {
+  const token = req.cookies['AuthToken']
+  if (!token) return res.send(403, 'no')
+  req.token = token
+  next()
+})
+
 router.get('/', function(req, res) {
   const tasks = Object.keys(mongo).map(key => mongo[key])
   res.send(tasks)

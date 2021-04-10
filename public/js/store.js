@@ -36,24 +36,33 @@
 		return fetch('/tasks', {
 			method: 'POST', body: JSON.stringify(task),
 			headers: { 'Content-Type': 'application/json' }
-		}).then(res => res.json())
+		}).then(handle403)
 	}
 
 	function putTask(task) {
 		return fetch('/tasks/' + task.pkey, {
 			method: 'PUT', body: JSON.stringify(task),
 			headers: { 'Content-Type': 'application/json' }
-		}).then(res => res.json())
+		}).then(handle403)
 	}
 	function deleteTask(task)	{
 		return fetch('/tasks/' + task.pkey, {
 			method: 'DELETE',
 			headers: { 'Content-Type': 'application/json' }
-		}).then(res => res.json())
+		}).then(handle403)
 	}
 
 	function fetchTasks() {
-		return fetch('/tasks').then(res => res.json())
+		return fetch('/tasks').then(handle403)
+	}
+
+	function handle403(res) {
+		if (res.status === 403) {
+			document.cookie = document.cookie.replace(/AuthToken=[a-z0-9]+/gi, 'AuthToken=; Max-Age=-99999999;')
+			window.location = window.location.href
+		} else {
+			return res.json()
+		}
 	}
 
 })(window);
