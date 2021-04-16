@@ -1,7 +1,7 @@
 var express = require('express')
+var { getPapiTasks, postPapiTask, putPapiTask, deletePapiTask } = require('./papi')
 var router = express.Router()
 
-let mongo = {} // kinda
 
 router.use(function (req, res, next) {
   const token = req.cookies['AuthToken']
@@ -11,25 +11,19 @@ router.use(function (req, res, next) {
 })
 
 router.get('/', function(req, res) {
-  const tasks = Object.keys(mongo).map(key => mongo[key])
-  res.send(tasks)
+  getPapiTasks(req.token).then(({data}) => res.send(data))
 })
 
 router.post('/', function(req, res) {
-  const task = { ...req.body, pkey: Date.now() }
-  mongo[task.pkey] = task
-  res.send(task)
+  postPapiTask(req.token, req.body).then(({data}) => res.send(data))
 })
 
 router.put('/:pkey', function(req, res) {
-  mongo[req.params.pkey] = req.body
-  res.send(req.body)
+  putPapiTask(req.token, req.params.pkey, req.body).then(({data}) => res.send(data))
 })
 
 router.delete('/:pkey', function(req, res) {
-  const task = mongo[req.params.pkey]
-  delete mongo[req.params.pkey]
-  res.send(task)
+  deletePapiTask(req.token, req.params.pkey).then(({data}) => res.send(data))
 })
 
 module.exports = router
