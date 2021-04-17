@@ -59,7 +59,7 @@
 				},
 				set: function (value) {
 					this.todos.forEach(function (todo) {
-						todo.completed = value;
+						todo.status = value;
 					});
 				}
 			}
@@ -86,7 +86,7 @@
 					return;
 				}
 				// TODO: Use a proper UUID instead of `Date.now()`.
-				this.todos.push({ id: Date.now(), title: value, completed: false });
+				this.todos.push({ name: value, completed: 0, status: 1, due: 0, list: 'PAPI ToDo App' });
 				this.newTodo = '';
 			},
 
@@ -96,7 +96,7 @@
 			},
 
 			editTodo: function (todo) {
-				this.beforeEditCache = todo.title;
+				this.beforeEditCache = todo.name;
 				this.editedTodo = todo;
 			},
 
@@ -105,15 +105,15 @@
 					return;
 				}
 				this.editedTodo = null;
-				todo.title = todo.title.trim();
-				if (!todo.title) {
+				todo.name = todo.name.trim();
+				if (!todo.name) {
 					this.removeTodo(todo);
 				}
 			},
 
 			cancelEdit: function (todo) {
 				this.editedTodo = null;
-				todo.title = this.beforeEditCache;
+				todo.name = this.beforeEditCache;
 			},
 
 			removeCompleted: function () {
